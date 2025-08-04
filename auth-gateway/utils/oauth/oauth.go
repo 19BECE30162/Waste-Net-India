@@ -1,13 +1,10 @@
-package utils
+package oauth
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
-	"net/http"
 	"os"
-
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )

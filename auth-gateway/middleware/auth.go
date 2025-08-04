@@ -8,10 +8,6 @@ import (
 	"auth-gateway/utils"
 )
 
-if utils.IsTokenBlacklisted(token) {
-	http.Error(w, "Token revoked", http.StatusUnauthorized)
-	return
-}
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
@@ -21,6 +17,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := strings.TrimPrefix(auth, "Bearer ")
+
+		// Move the blacklist check here:
+		if utils.IsTokenBlacklisted(token) {
+			http.Error(w, "Token revoked", http.StatusUnauthorized)
+			return
+		}
+
 		claims, err := utils.ValidateJWT(token)
 		if err != nil {
 			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)

@@ -1,5 +1,4 @@
 package storage
-
 import (
 	"context"
 	"os"

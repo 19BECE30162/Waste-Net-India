@@ -11,13 +11,13 @@ package main
 // @Router /login [post]
 
 import (
-	"log"
-	"net/http"
 	"auth-gateway/handlers"
 	"auth-gateway/middleware"
+	"log"
+	"net/http"
 	"github.com/go-chi/chi/v5"
-	swagger "github.com/swaggo/http-swagger"
-	_ "auth-gateway/docs"
+	// swagger "github.com/swaggo/http-swagger"
+	// _ "auth-gateway/docs"
 )
 
 func main() {
@@ -31,10 +31,10 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.AuthMiddleware)
 		r.Get("/protected", handlers.Protected)
-		r.Get("/admin", middleware.RequireRole("admin"), handlers.AdminOnly)
+		r.With(middleware.RequireRole("admin")).Get("/admin", handlers.AdminOnly)
 	})
 
-	r.Get("/swagger/*", swagger.WrapHandler)
+	// r.Get("/swagger/*", swagger.WrapHandler)
 
 	log.Println("Auth Gateway running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))

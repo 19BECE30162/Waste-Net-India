@@ -1,14 +1,21 @@
 package utils
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/redis/go-redis/v9"
 )
 
-var jwtKey = []byte("your_super_secret_key") // Replace with env var in production
+var jwtKey = []byte("your_super_secret_key") // Use env var in prod
+
+var ctx = context.Background()
+var rdb = redis.NewClient(&redis.Options{
+	Addr: "localhost:6379", // Change this if using Docker or non-default port
+})
 
 type CustomClaims struct {
 	Role string `json:"role"`
@@ -49,7 +56,6 @@ func GenerateRefreshToken() string {
 	_, _ = rand.Read(b)
 	return base64.URLEncoding.EncodeToString(b)
 }
-
 
 func BlacklistToken(token string, duration time.Duration) {
 	rdb.Set(ctx, "bl:"+token, "revoked", duration)
