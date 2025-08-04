@@ -22,6 +22,9 @@ import (
 
 func main() {
 	r := chi.NewRouter()
+
+	r.Use(middleware.CorsMiddleware)
+
 	r.Post("/login", handlers.Login)
 	r.Post("/refresh", handlers.Refresh)
 	r.Get("/auth/google", handlers.GoogleLogin)

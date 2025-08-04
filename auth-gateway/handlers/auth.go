@@ -19,13 +19,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var creds Credentials
 	_ = json.NewDecoder(r.Body).Decode(&creds)
 
-	// Dummy users with roles
-	users := map[string]struct {
-		Password string
-		Role     string
-	}{
-		"admin": {"password", "admin"},
-		"user":  {"123456", "user"},
+	var userRole = "user" // default role
+
+	storedPassword, ok := storage.GetUserPassword(creds.Username)
+	if !ok {
+		// Register user if not found
+		storage.SaveUser(creds.Username, creds.Password)
+	} else if storedPassword != creds.Password {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
 	}
 
 	user, ok := users[creds.Username]

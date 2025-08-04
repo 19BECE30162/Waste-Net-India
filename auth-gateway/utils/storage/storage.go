@@ -31,3 +31,15 @@ func VerifyRefreshToken(token string) (string, bool) {
 func RevokeRefreshToken(token string) {
 	rdb.Del(ctx, "refresh:"+token)
 }
+
+func SaveUser(username, password string) {
+	rdb.HSet(ctx, "users", username, password)
+}
+
+func GetUserPassword(username string) (string, bool) {
+	pass, err := rdb.HGet(ctx, "users", username).Result()
+	if err != nil {
+		return "", false
+	}
+	return pass, true
+}
